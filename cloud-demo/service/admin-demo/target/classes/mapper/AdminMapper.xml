@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与接口全限定名一致 -->
+<mapper namespace="com.clou.admindemo.mapper.AdminMapper">
+
+
+    <update id="update">
+        UPDATE admins
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="getUserList" resultType="com.clou.admindemo.POJO.vo.AdminUserVO">
+        SELECT
+            id,
+            username,
+            phone,
+            user_no,
+            status
+        FROM users
+        ORDER BY id DESC
+            LIMIT #{pageSize} OFFSET ${(pageNum - 1) * pageSize}
+    </select>
+    <select id="getMerchantList" resultType="com.clou.admindemo.POJO.vo.AdminMerchantVO">
+        SELECT
+            id,
+            username,
+            phone,
+            merchant_no,
+            status
+        FROM merchants
+        ORDER BY id DESC
+            LIMIT #{pageSize} OFFSET ${(pageNum - 1) * pageSize}
+    </select>
+</mapper>

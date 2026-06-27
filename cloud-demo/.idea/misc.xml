@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/user-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/merchant-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/commodity-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/order-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/admin-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/common/pom.xml" />
+        <option value="$PROJECT_DIR$/api-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/service/pom.xml" />
+        <option value="$PROJECT_DIR$/service/service-common/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="ms-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

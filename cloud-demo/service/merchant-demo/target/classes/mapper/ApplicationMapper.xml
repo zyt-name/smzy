@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clou.merchantdemo.mapper.ApplicationMapper">
+
+    <insert id="insertApplication" parameterType="com.clou.merchantdemo.POJO.po.ApplicationPO"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into application(
+            user_id,
+            requester_type,
+            phone,
+            target_id,
+            target_type,
+            request_type,
+            create_time,
+            request_status,
+            reason
+        ) values (
+            #{userId},
+            #{requesterType},
+            #{phone},
+            #{targetId},
+            #{targetType},
+            #{requestType},
+            #{createTime},
+            #{requestStatus},
+            #{reason}
+        )
+    </insert>
+
+    <select id="selectApplicationList" resultType="com.clou.merchantdemo.POJO.po.ApplicationPO">
+        select * from application
+        where user_id = #{userId}
+        and requester_type = #{requesterType}
+        <if test="requestType != null">
+            and request_type = #{requestType}
+        </if>
+        <if test="requestStatus != null">
+            and request_status = #{requestStatus}
+        </if>
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countApplicationList" resultType="java.lang.Long">
+        select count(*) from application
+        where user_id = #{userId}
+        and requester_type = #{requesterType}
+        <if test="requestType != null">
+            and request_type = #{requestType}
+        </if>
+        <if test="requestStatus != null">
+            and request_status = #{requestStatus}
+        </if>
+    </select>
+
+    <select id="selectRefundApplicationList" resultType="com.clou.merchantdemo.POJO.po.ApplicationPO">
+        select distinct a.* from application a
+        inner join order_items oi on a.target_id = cast(oi.order_id as char)
+        where oi.merchant_id = #{merchantId}
+        and a.requester_type = #{requesterType}
+        and a.target_type = #{targetType}
+        and a.request_type = #{requestType}
+        <if test="orderId != null and orderId != ''">
+            and a.target_id = #{orderId}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        order by a.create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countRefundApplicationList" resultType="java.lang.Long">
+        select count(distinct a.id) from application a
+        inner join order_items oi on a.target_id = cast(oi.order_id as char)
+        where oi.merchant_id = #{merchantId}
+        and a.requester_type = #{requesterType}
+        and a.target_type = #{targetType}
+        and a.request_type = #{requestType}
+        <if test="orderId != null and orderId != ''">
+            and a.target_id = #{orderId}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+    </select>
+
+    <update id="updateApplicationStatus">
+        update application
+        set request_status = #{requestStatus},
+            feedback = #{feedback}
+        where id = #{applicationId}
+    </update>
+
+</mapper>

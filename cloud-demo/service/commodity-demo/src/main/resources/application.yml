@@ -1,0 +1,17 @@
+spring:
+  config:
+    import: optional:classpath:application-common.yml
+  application:
+    name: shop-demo
+  data:
+    redis:
+      database: 1
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8084
+  servlet:
+    context-path: /shop-demo

@@ -1,0 +1,77 @@
+spring:
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: ${config.ip.nacos}:${config.port.nacos}
+    openfeign:
+      okhttp:
+        enabled: true
+
+  # 数据库公共配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${config.ip.mysql}:${config.port.mysql}/cloud-test?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${config.mysql.username}
+    password: ${config.mysql.password}
+
+  # Redis公共配置
+  data:
+    redis:
+      host: ${config.ip.redis}
+      port: ${config.port.redis}
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+    # MongoDB公共配置
+    mongodb:
+      host: ${config.ip.mongodb}
+      port: ${config.port.mongodb}
+      database: ${config.mongodb.database}
+      username: ${config.mongodb.username}
+      password: ${config.mongodb.password}
+
+  # RabbitMQ公共配置
+  rabbitmq:
+    host: ${config.ip.rabbitmq}
+    port: ${config.port.rabbitmq}
+    username: ${config.rabbitmq.username}
+    password: ${config.rabbitmq.password}
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          max-attempts: 3
+          enabled: true
+        default-requeue-rejected: false
+
+# 图片保存路径配置
+img:
+  save-path: ${config.img.save-path}
+
+# MyBatis公共配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# Sa-Token 配置
+sa-token: 
+  # token 名称 (同时也是 cookie 名称)
+  token-name: satoken
+  # token 有效期，单位秒, 1小时做测试
+  timeout: 3600
+  # token 临时有效期 (指定时间内无操作就视为 token 过期) 单位: 秒
+  active-timeout: -1
+  # 是否允许同一账号并发登录 (为 true 时允许一起登录, 为 false 时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token (为 true 时共用, 为 false 时每次登录新建 token)
+  is-share: true
+  # token 风格
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: false

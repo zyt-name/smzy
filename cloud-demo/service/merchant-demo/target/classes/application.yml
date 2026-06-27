@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: optional:classpath:application-common.yml
+  application:
+    name: merchant-demo
+  web:
+    resources:
+      static-locations: file:${img.save-path}/
+
+server:
+  port: 8083
+  servlet:
+    context-path: /merchant-demo

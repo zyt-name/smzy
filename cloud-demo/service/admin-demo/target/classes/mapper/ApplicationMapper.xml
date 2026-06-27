@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clou.admindemo.mapper.ApplicationMapper">
+
+    <select id="getApplicationList" resultType="com.clou.admindemo.POJO.vo.ApplicationVO">
+        SELECT
+            id,
+            user_id as userId,
+            requester_type as requesterType,
+            phone,
+            target_id as targetId,
+            target_type as targetType,
+            request_type as requestType,
+            create_time as createTime,
+            request_status as requestStatus,
+            reason,
+            feedback
+        FROM application
+        <where>
+            <if test="requesterType != null">
+                AND requester_type = #{requesterType}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="requestStatus != null">
+                AND request_status = #{requestStatus}
+            </if>
+            <if test="requestType != null">
+                AND request_type = #{requestType}
+            </if>
+            <if test="targetType != null and targetId != null">
+                AND target_type = #{targetType}
+                AND target_id = #{targetId}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET ${(pageNum - 1) * pageSize}
+    </select>
+
+    <select id="getApplicationTotal" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM application
+        <where>
+            <if test="requesterType != null">
+                AND requester_type = #{requesterType}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="requestStatus != null">
+                AND request_status = #{requestStatus}
+            </if>
+            <if test="requestType != null">
+                AND request_type = #{requestType}
+            </if>
+            <if test="targetType != null and targetId != null">
+                AND target_type = #{targetType}
+                AND target_id = #{targetId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateApplicationStatus" parameterType="com.clou.admindemo.POJO.DTO.ApplicationProcessDTO">
+        UPDATE application
+        SET request_status = #{requestStatus},
+            feedback = #{feedback}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

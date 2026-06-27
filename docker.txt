@@ -1,0 +1,49 @@
+# MySQL
+docker run -d --name bs-mysql-test -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123456 --restart always --label group=bs mysql:8.0
+
+# Redis
+docker run -d --name bs-redis -p 6378:6379 --restart always --label group=bs redis:latest
+
+# RabbitMQ （后手动注入延迟消息插件）
+docker run -d --name bs-rabbitmq -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=123456 --restart always rabbitmq:3.13-management-alpine
+# 注入插件（地址要变化）
+docker cp "C:\Users\zyt\Desktop\bs\bs\cloud-demo\mq_cj\rabbitmq_delayed_message_exchange-3.13.0.ez" bs-rabbitmq:/plugins
+# 激活
+docker exec bs-rabbitmq rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+# 验证
+docker exec bs-rabbitmq rabbitmq-plugins list
+
+# Elasticsearch 7.12.1 + 自动安装中文分词器(IK)
+docker run -d ^
+  --name bs-es ^
+  -p 9200:9200 ^
+  -p 9300:9300 ^
+  -e "discovery.type=single-node" ^
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" ^
+  --restart always ^
+  --label group=bs ^
+  elasticsearch:7.12.1
+# 导入ik并验证
+docker cp "C:\Users\zyt\Desktop\bs\bs\cloud-demo\mq_cj\elasticsearch-analysis-ik-7.12.1" bs-es:/usr/share/elasticsearch/plugins/ik
+docker exec bs-es bin/elasticsearch-plugin list
+
+# Kibana
+docker run -d ^
+  --name bs-kibana ^
+  -p 5601:5601 ^
+  --link bs-es:elasticsearch ^
+  --restart always ^
+  --label group=bs ^
+  -e "I18N_LOCALE=zh-CN" ^
+  kibana:7.12.1
+
+# Nacos
+docker run -d --name bs-nacos -p 8848:8848 -p 9848:9848 -p 9849:9849 -e MODE=standalone -e TIME_ZONE=Asia/Shanghai --restart always --label group=bs nacos/nacos-server:v2.3.2
+
+# MongoDB
+docker run -d ^
+--name mongodb ^
+-p 27017:27017 ^
+-e MONGO_INITDB_ROOT_USERNAME=root ^
+-e MONGO_INITDB_ROOT_PASSWORD=123456 ^
+mongo:latest

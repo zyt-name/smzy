@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与接口全限定名一致 -->
+<mapper namespace="com.clou.orderdemo.mapper.OrderMapper">
+
+
+    <insert id="insertOrder" parameterType="com.clou.orderdemo.POJO.po.OrderPO"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into orders(
+            order_no,
+            user_id,
+            status,
+            total_price,
+            payment_method,
+            created_at,
+            updated_at,
+            remark,
+            user_delete,
+            merchant_delete
+        ) values (
+                     #{orderNo},
+                     #{userId},
+                     #{status},
+                     #{totalPrice},
+                     #{paymentMethod},
+                     #{createdAt},
+                     #{updatedAt},
+                     #{remark},
+                     #{userDelete},
+                     #{merchantDelete}
+                 )
+    </insert>
+
+    <!-- 根据订单ID列表查询订单（分页）- 只查询商家未删除的 -->
+    <select id="selectOrdersByIds" resultType="com.clou.orderdemo.POJO.po.OrderPO">
+        select * from orders
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and merchant_delete = 0
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <!-- 根据订单ID列表和状态查询订单（分页）- 只查询商家未删除的 -->
+    <select id="selectOrdersByIdsAndStatus" resultType="com.clou.orderdemo.POJO.po.OrderPO">
+        select * from orders
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and status = #{status}
+        and merchant_delete = 0
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <!-- 根据订单ID列表统计订单总数 - 只统计商家未删除的 -->
+    <select id="countOrdersByIds" resultType="java.lang.Long">
+        select count(*) from orders
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and merchant_delete = 0
+    </select>
+
+    <!-- 根据订单ID列表和状态统计订单总数 - 只统计商家未删除的 -->
+    <select id="countOrdersByIdsAndStatus" resultType="java.lang.Long">
+        select count(*) from orders
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and status = #{status}
+        and merchant_delete = 0
+    </select>
+
+    <!-- 根据订单ID列表和日期范围统计每天的订单数量 -->
+    <select id="selectDailyOrderCountByIds" resultType="com.clou.orderdemo.POJO.vo.DailyOrderCountVO">
+        select
+            DATE(created_at) as date,
+            count(*) as orderCount
+        from orders
+        where id in
+        <foreach collection="orderIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and DATE(created_at) between #{startDate} and #{endDate}
+        and merchant_delete = 0
+        group by DATE(created_at)
+        order by date
+    </select>
+
+    <!-- 根据订单ID列表、日期范围和有效状态统计每天的有效订单数量 -->
+    <!-- 有效订单排除状态：0-待支付，4-已取消，5-退单 -->
+    <select id="selectDailyValidOrderCountByIds" resultType="com.clou.orderdemo.POJO.vo.DailyOrderCountVO">
+        select
+            DATE(created_at) as date,
+            count(*) as orderCount
+        from orders
+        where id in
+        <foreach collection="orderIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and DATE(created_at) between #{startDate} and #{endDate}
+        and status not in (0, 4, 5)
+        and merchant_delete = 0
+        group by DATE(created_at)
+        order by date
+    </select>
+
+    <!-- 根据订单ID列表和日期范围统计每天的交易额 -->
+    <select id="selectDailyAmountByIds" resultType="com.clou.orderdemo.POJO.vo.DailyAmountVO">
+        select
+            DATE(created_at) as date,
+            sum(total_price) as amount
+        from orders
+        where id in
+        <foreach collection="orderIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and DATE(created_at) between #{startDate} and #{endDate}
+        and merchant_delete = 0
+        group by DATE(created_at)
+        order by date
+    </select>
+
+    <!-- 根据订单ID列表、日期范围和有效状态统计每天的有效交易额 -->
+    <!-- 有效订单排除状态：0-待支付，4-已取消，5-退单 -->
+    <select id="selectDailyValidAmountByIds" resultType="com.clou.orderdemo.POJO.vo.DailyAmountVO">
+        select
+            DATE(created_at) as date,
+            sum(total_price) as amount
+        from orders
+        where id in
+        <foreach collection="orderIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and DATE(created_at) between #{startDate} and #{endDate}
+        and status not in (0, 4, 5)
+        and merchant_delete = 0
+        group by DATE(created_at)
+        order by date
+    </select>
+
+    <!-- 根据商家ID查询交易构成统计数据（按商品分类统计） -->
+    <!-- 查询订单详情表中该商家的数据，关联订单主表（状态为1,2,3,4），再关联商品表按分类统计 -->
+    <select id="selectTransactionStructureByMerchantId" resultType="java.util.HashMap">
+        SELECT
+            p.category as category,
+            COUNT(*) as count
+        FROM order_items oi
+        INNER JOIN orders o ON oi.order_id = o.id
+        INNER JOIN products p ON oi.product_id = p.id
+        WHERE oi.merchant_id = #{merchantId}
+          AND o.status IN (1, 2, 3, 4)
+          AND o.merchant_delete = 0
+          AND p.category IS NOT NULL
+        GROUP BY p.category
+        ORDER BY count DESC
+    </select>
+
+</mapper>

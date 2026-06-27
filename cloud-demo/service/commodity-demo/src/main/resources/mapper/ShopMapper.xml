@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与接口全限定名一致 -->
+<mapper namespace="com.clou.shopdemo.mapper.ShopMapper">
+
+
+    <insert id="addShop" parameterType="com.clou.shopdemo.POJO.po.ShopPO" useGeneratedKeys="true" keyProperty="id">
+        insert into products (
+            name,
+            price,
+            stock,
+            merchant_id,
+            status,
+            category,
+            created_at,
+            admin_status
+        ) values (
+                     #{name},
+                     #{price},
+                     #{stock},
+                     #{merchantId},
+                     #{status},
+                     #{category},
+                     #{createdAt},
+                     #{adminStatus}
+                 )
+    </insert>
+    <update id="updateShop" parameterType="com.clou.shopdemo.POJO.dto.ShopUpdateDTO">
+        UPDATE products p
+        <set>
+            <if test="name != null">p.name = #{name},</if>
+            <if test="price != null">p.price = #{price},</if>
+            <if test="stock != null">p.stock = #{stock},</if>
+            <if test="category != null">p.category = #{category},</if>
+            <if test="status != null">p.status = #{status},</if>
+        </set>
+        WHERE p.id = #{id}
+    </update>
+
+    <!-- 管理员更新商品admin_status状态 -->
+    <update id="updateShopAdminStatus">
+        UPDATE products
+        SET admin_status = #{adminStatus}
+        WHERE id = #{shopId}
+    </update>
+    <update id="updateShopDetail" parameterType="com.clou.shopdemo.POJO.dto.ShopUpdateDTO">
+        UPDATE product_details pd
+        <set>
+            <if test="description != null">pd.description = #{description},</if>
+            <if test="specification != null">pd.specification = #{specification},</if>
+            <if test="imageUrls != null">pd.image_urls = #{imageUrls},</if>
+            <if test="label != null">pd.label = #{label},</if>
+        </set>
+        WHERE pd.product_id = #{id}
+    </update>
+
+    <select id="getImagesByProductIds" resultType="com.clou.shopdemo.POJO.po.ShopDetailsPO">
+        SELECT product_id as shopId, image_urls as imageUrls
+        FROM product_details
+        WHERE product_id IN
+        <foreach collection="productIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="byMerchantId" resultType="com.clou.shopdemo.POJO.po.ShopPO">
+        SELECT
+            p.id,
+            p.name,
+            p.price,
+            p.stock,
+            p.merchant_id as merchantId,
+            p.status,
+            p.category,
+            p.created_at as createdAt,
+            p.admin_status as adminStatus,
+            pd.image_urls as imageUrls,
+            pd.label
+        FROM products p
+        LEFT JOIN product_details pd ON p.id = pd.product_id
+        WHERE p.merchant_id = #{merchantId}
+    </select>
+
+    <select id="getShopDetailsByShopIds" resultType="com.clou.shopdemo.POJO.po.ShopDetailsPO">
+        SELECT
+            product_id as shopId,
+            description,
+            specification,
+            image_urls as imageUrls,
+            label,
+            updated_at as updatedAt
+        FROM product_details
+        WHERE product_id IN
+        <foreach collection="shopIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 管理员分页查询商品（支持动态条件） -->
+    <select id="adminSearchShops" resultType="com.clou.shopdemo.POJO.po.ShopPO">
+        SELECT
+            p.id,
+            p.name,
+            p.price,
+            p.stock,
+            p.merchant_id as merchantId,
+            p.status,
+            p.category,
+            p.created_at as createdAt,
+            p.admin_status as adminStatus,
+            pd.image_urls as imageUrls
+        FROM products p
+        LEFT JOIN product_details pd ON p.id = pd.product_id
+        <where>
+            <if test="name != null and name != ''">
+                AND p.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="merchantId != null">
+                AND p.merchant_id = #{merchantId}
+            </if>
+            <if test="category != null and category != ''">
+                AND p.category = #{category}
+            </if>
+        </where>
+        ORDER BY p.created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 管理员查询商品总数（支持动态条件） -->
+    <select id="adminSearchShopsCount" resultType="long">
+        SELECT COUNT(*)
+        FROM products p
+        <where>
+            <if test="name != null and name != ''">
+                AND p.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="merchantId != null">
+                AND p.merchant_id = #{merchantId}
+            </if>
+            <if test="category != null and category != ''">
+                AND p.category = #{category}
+            </if>
+        </where>
+    </select>
+
+</mapper>

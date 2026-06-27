@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.clou.userdemo.mapper.ApplicationMapper">
+
+    <insert id="insertApplication" parameterType="com.clou.userdemo.POJO.po.ApplicationPO"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into application(
+            user_id,
+            requester_type,
+            phone,
+            target_id,
+            target_type,
+            request_type,
+            create_time,
+            request_status,
+            reason
+        ) values (
+            #{userId},
+            #{requesterType},
+            #{phone},
+            #{targetId},
+            #{targetType},
+            #{requestType},
+            #{createTime},
+            #{requestStatus},
+            #{reason}
+        )
+    </insert>
+
+    <select id="selectApplicationList" resultType="com.clou.userdemo.POJO.po.ApplicationPO">
+        select * from application
+        where user_id = #{userId}
+        and requester_type = #{requesterType}
+        <if test="requestType != null">
+            and request_type = #{requestType}
+        </if>
+        <if test="requestStatus != null">
+            and request_status = #{requestStatus}
+        </if>
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countApplicationList" resultType="java.lang.Long">
+        select count(*) from application
+        where user_id = #{userId}
+        and requester_type = #{requesterType}
+        <if test="requestType != null">
+            and request_type = #{requestType}
+        </if>
+        <if test="requestStatus != null">
+            and request_status = #{requestStatus}
+        </if>
+    </select>
+
+</mapper>

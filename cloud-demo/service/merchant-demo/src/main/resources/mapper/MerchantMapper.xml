@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与接口全限定名一致 -->
+<mapper namespace="com.clou.merchantdemo.mapper.MerchantMapper">
+
+
+    <update id="updateMerchant">
+        UPDATE merchants
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询商户信息 -->
+    <select id="getMerchantById" resultType="com.clou.merchantdemo.POJO.po.MerchantPO">
+        SELECT id, username, password, phone, status, created_at, merchant_no
+        FROM merchants
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据商户ID查询地址列表 -->
+    <select id="getAddressListByMerchantId" resultType="com.clou.merchantdemo.POJO.po.MerchantAddressPO">
+        SELECT id, merchant_id, province, city, district, detail_address, created_time, update_time
+        FROM merchant_address
+        WHERE merchant_id = #{merchantId}
+        ORDER BY created_time DESC
+    </select>
+</mapper>

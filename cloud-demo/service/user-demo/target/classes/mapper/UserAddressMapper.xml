@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与接口全限定名一致 -->
+<mapper namespace="com.clou.userdemo.mapper.UserAddressMapper">
+
+
+    <update id="updateUserAddress">
+        UPDATE user_address
+        <set>
+            <if test="receiverName != null and receiverName != ''">
+                receiver_name = #{receiverName},
+            </if>
+            <if test="receiverPhone != null and receiverPhone != ''">
+                receiver_phone = #{receiverPhone},
+            </if>
+            <if test="province != null and province != ''">
+                province = #{province},
+            </if>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="district != null and district != ''">
+                district = #{district},
+            </if>
+            <if test="detailAddress != null and detailAddress != ''">
+                detail_address = #{detailAddress},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <!-- 仅根据地址ID作为查询条件 -->
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,32 @@
+config:
+  ip:
+    mysql: 127.0.0.1 # mysql地址
+    redis: 127.0.0.1 #  redis地址
+    rabbitmq: 127.0.0.1 #  rabbitmq地址
+    nacos: 127.0.0.1 # nacos地址
+    elasticsearch: 127.0.0.1 # elasticsearch地址
+    mongodb: localhost # mongodb地址
+
+  port:
+    mysql: 3307 #  mysql端口
+    redis: 6378 #  redis端口
+    nacos: 8848 # nacos端口
+    rabbitmq: 5672 # rabbitmq端口
+    elasticsearch: 9200 # elasticsearch端口
+    mongodb: 27017 # mongodb端口
+
+  mysql:
+    username: root #  mysql用户名
+    password: 123456 #  mysql密码
+
+  rabbitmq:
+    username: root #  rabbitmq用户名
+    password: 123456 #  rabbitmq密码
+
+  mongodb:
+    username: root # mongodb用户名
+    password: 123456 # mongodb密码
+    database: admin # mongodb认证数据库
+
+  img:
+    save-path: C:\Users\zyt\Desktop\bs\bs\cloud-demo\img # 图片保存路径

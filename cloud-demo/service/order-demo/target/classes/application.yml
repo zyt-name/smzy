@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: optional:classpath:application-common.yml
+  application:
+    name: order-demo
+  rabbitmq:
+    listener:
+      simple:
+        prefetch: 1
+        acknowledge-mode: auto
+
+server:
+  port: 8085
+  servlet:
+    context-path: /order-demo

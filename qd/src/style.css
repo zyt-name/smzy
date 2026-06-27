@@ -1,0 +1,43 @@
+:root {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #333;
+  background-color: #f0f2f5;
+  --primary-color: #2a9eff;
+  --primary-hover: #0072ff;
+  --bg-color: #f0f2f5;
+  --text-main: #1a1a1a;
+  --text-sub: #888;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 1200px;
+  background-color: var(--bg-color);
+}
+
+#app {
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Element Plus Global Overrides */
+.el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.el-button--primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+.el-input.is-active .el-input__wrapper,
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--primary-color) inset !important;
+}

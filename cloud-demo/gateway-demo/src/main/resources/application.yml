@@ -1,0 +1,55 @@
+spring:
+  main:
+    web-application-type: reactive
+  config:
+    import: optional:classpath:application-common.yml
+  application:
+    name: gateway-demo
+  cloud:
+    gateway:
+      routes:
+        - id: user
+          uri: lb://user-demo
+          predicates:
+            - Path=/user-demo/**
+          filters:
+            - StripPrefix=0
+
+        - id: order
+          uri: lb://order-demo
+          predicates:
+            - Path=/order-demo/**
+          filters:
+            - StripPrefix=0
+
+        - id: merchant
+          uri: lb://merchant-demo
+          predicates:
+            - Path=/merchant-demo/**
+          filters:
+            - StripPrefix=0
+
+        - id: admin
+          uri: lb://admin-demo
+          predicates:
+            - Path=/admin-demo/**
+          filters:
+            - StripPrefix=0
+
+        - id: shop
+          uri: lb://shop-demo
+          predicates:
+            - Path=/shop-demo/**
+          filters:
+            - StripPrefix=0
+  data:
+    redis:
+      database: 0
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.client.discovery: DEBUG
