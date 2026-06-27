@@ -217,6 +217,10 @@ npm run dev
 
 访问 `http://localhost:5173` 即可使用。
 
-License
+系统截图如下：
+<img width="2526" height="1399" alt="image" src="https://github.com/user-attachments/assets/9554d345-cd27-4918-b181-5481752a543a" />
+<img width="1340" height="1400" alt="image" src="https://github.com/user-attachments/assets/8358f425-5587-4be7-81e1-6ecaed2fb5c0" />
+<img width="1767" height="1392" alt="image" src="https://github.com/user-attachments/assets/34ba8b5b-c87b-4df0-9178-7c900fac0646" />
+<img width="2559" height="1364" alt="image" src="https://github.com/user-attachments/assets/dcb932c0-ac6f-435f-a429-1524524fa625" />
+<img width="2556" height="1337" alt="image" src="https://github.com/user-attachments/assets/68e18408-68f6-465f-aba9-fb3f467f24eb" />
 
-MIT
